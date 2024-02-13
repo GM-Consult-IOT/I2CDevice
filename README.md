@@ -1,9 +1,9 @@
-# [![Github Repo](https://github.com/GM-Consult-IOT/I2CDevice/blob/main/.img/119493932.png)](https://github.com/GM-Consult-IOT/I2CDevice)  I2CDevice Library
+# [![Github Repo](https://github.com/GM-Consult-IOT/I2CDevice/blob/main/.img/119493932.png)](https://github.com/GM-Consult-IOT/I2CDevice)  I2CDevice
 
 Helper library to abstract away I2C transactions and registers. It is an extension of the [Adafruit_BusIO library's](https://github.com/adafruit/Adafruit_BusIO) `I2CDevice` class.
 
 Contents
-- [  I2CDevice Library](#--i2cdevice-library)
+- [  I2CDevice](#--i2cdevice)
   - [Description](#description)
   - [Usage](#usage)
   - [References](#references)
