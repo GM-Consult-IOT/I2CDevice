@@ -46,7 +46,7 @@
 #ifndef IC2_DEVICE_H_
 #define IC2_DEVICE_H_
 
-//#define DEBUG_I2DEVICE_SERIAL Serial
+#define DEBUG_I2DEVICE_SERIAL Serial
 
 
 #include <Arduino.h>
@@ -128,6 +128,16 @@ public:
     /*!   @brief  How many bytes we can read in a transaction
         /// @return The size of the Wire receive/transmit buffer */
     size_t maxBufferSize() { return _maxBufferSize; }
+
+    /// @brief Poll all addresses on [i2c_wire] and populate a list of the addresses that respond.
+    /// @param devices Array that will be populated with the addresses of the attached I2C devices.
+    /// @param echo Prints the results of the device poll to the serial port if echo is true. Defaults to false.
+    uint8_t listDevices(byte  devices[]);
+
+    /// @brief Returns an address string from the [address].
+    /// @param b The byte to stringify.
+    /// @return A string from the byte [b].
+    static String getByteString(byte b);
 
 private:
     
