@@ -15,7 +15,7 @@ When the `I2CDevice` is initialized (`I2CDevice::begin()`) it will also initiali
 
 The `I2CDevice` exposes the following public functions:
 
-* `detected` checks the bus for the presence of a device with address [_addr] and returns true if [_addr] is detected on the bus.
+* `detected` checks the bus for the presence of a device with a specific address and returns true if the address is detected on the bus.
 * `readLength` reads from the device into a buffer.
 * `read` reads a specified number of bytes from a register into a buffer.
 * `write` writes num bytes from specified buffer into a given register.
@@ -29,7 +29,7 @@ The `I2CDevice` exposes the following public functions:
 * `setSpeed` changes the I2C clock speed.
 * `maxBufferSize` Returns the maximum number of bytes that can be read in a transaction.
 * `listDevices` polls all addresses on the I2C bus and populates an array of the addresses that respond.
-* `readAllRegisters` reads the register values from the device, starting at [startReg] and reading [len] elements.
+* `readAllRegisters` reads the register values from the device, starting at a specified register and reading a specified number of elements.
 * `getByteString` is a static function that returns a formatted string from a byte value.
 
 ## Usage
