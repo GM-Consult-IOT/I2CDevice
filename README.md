@@ -12,10 +12,11 @@ Contents
 
 The `I2CDevice` class wraps a reference to a `TwoWire` instance linked to a specific address on the `I2C` bus. 
 
-When the `I2CDevice` is initialized (`I2CDevice::begin()`) it will also initialize the `TwoWire`instance with the specified SDA and SCL ports. Optionally it will poll the device address and return false if the device did not respond.
+When the `I2CDevice` is initialized it will also initialize the `TwoWire`instance with the specified SDA and SCL ports. Optionally it will poll the device address and return false if the device did not respond.
 
 The `I2CDevice` exposes the following public functions:
 
+* `begin` initializes the `I2CDevice`.
 * `detected` checks the bus for the presence of a device with a specific address and returns true if the address is detected on the bus.
 * `readLength` reads from the device into a buffer.
 * `read` reads a specified number of bytes from a register into a buffer.
