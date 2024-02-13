@@ -46,8 +46,8 @@
 #ifndef IC2_DEVICE_H_
 #define IC2_DEVICE_H_
 
-#define DEBUG_I2DEVICE_SERIAL Serial
 
+// #define DEBUG_I2DEVICE_SERIAL Serial
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -73,7 +73,10 @@ public:
     /// 99% of sensors/devices don't mind, but once in a while they
     /// don't respond well to a scan!
     /// @return true if the instance was properly initialized.
-    bool begin(bool addr_detect = true);
+    bool begin(bool addr_detect = true, 
+            int sda = 21, 
+            int scl = 22, 
+            uint32_t frequency = 0U);
 
     /// @brief Calls [wire.close()] and sets _begun = false.
     void end(void);
@@ -89,7 +92,57 @@ public:
      /// @param  len Number of bytes from buffer to read.
      /// @param  stop Whether to send an I2C STOP signal on read
      /// @return True if read was successful, otherwise false.
-    bool read(uint8_t *buffer, size_t len, bool stop = true);
+    bool readLength(uint8_t *buffer, size_t len, bool stop = true);
+
+     /// @brief  Reads num bytes from specified register into a given buffer
+     /// @param  reg
+     ///         Register
+     /// @param  *buf
+     ///         Buffer
+     /// @param  num
+     ///         Number of bytes
+     /// @return Position after reading
+    uint8_t read(uint8_t reg, uint8_t *buf, uint8_t num);
+
+     /// @brief  Writes num bytes from specified buffer into a given register
+     /// @param  reg
+     ///         Register
+     /// @param  *buf
+     ///         Buffer
+     /// @param  num
+     ///         Number of bytes
+    void write(uint8_t reg, uint8_t *buf, uint8_t num);
+
+     /// @brief  Writes specified value to given register
+     /// @param  reg
+     ///         Register to write to
+     /// @param  value
+     ///         Value to write
+    void write8(byte reg, byte value);
+
+     /// @brief  Reads 8 bits from specified register
+     /// @param  reg
+     ///         Register to write to
+     /// @return Value in register
+    uint8_t read8(byte reg);
+
+     /// @brief  Reads 32 bits from specified register
+     /// @param  reg
+     ///         Register to write to
+     /// @return Value in register
+    uint32_t read32(uint8_t reg);
+
+     /// @brief  Reads 16 bites from specified register
+     /// @param  reg
+     ///         Register to write to
+     /// @return Value in register
+    uint16_t read16(uint8_t reg);
+    
+     /// @brief  Reads 16 bits from specified register
+     /// @param  reg
+     ///         Register to write to
+     /// @return Value in register
+    uint16_t read16R(uint8_t reg);
 
      /// @brief  Write a buffer or two to the I2C device. Cannot be more than
      /// maxBufferSize() bytes.
@@ -102,7 +155,7 @@ public:
      /// @param  prefix_len Number of bytes from prefix buffer to write
      /// @param  stop Whether to send an I2C STOP signal on write
      /// @return True if write was successful, otherwise false.
-    bool write(const uint8_t *buffer, size_t len, bool stop = true,
+    bool writeLen(const uint8_t *buffer, size_t len, bool stop = true,
                 const uint8_t *prefix_buffer = nullptr, size_t prefix_len = 0);
 
      /// @brief  Write some data, then read some data from I2C into another buffer.
@@ -129,15 +182,34 @@ public:
         /// @return The size of the Wire receive/transmit buffer */
     size_t maxBufferSize() { return _maxBufferSize; }
 
-    /// @brief Poll all addresses on [i2c_wire] and populate a list of the addresses that respond.
-    /// @param devices Array that will be populated with the addresses of the attached I2C devices.
-    /// @param echo Prints the results of the device poll to the serial port if echo is true. Defaults to false.
-    uint8_t listDevices(byte  devices[]);
+    /// @brief Poll all addresses on [i2c_wire] and populate a 
+    /// list of the addresses that respond.
+    /// @param devices Array that will be populated with the 
+    /// addresses of the attached I2C devices.
+    /// @param verbose Prints the results of the device poll 
+    /// to the serial port if true. Defaults to true.
+    /// @return the number of devices that responded.
+    uint8_t listDevices(byte  devices[], bool verbose = true);
+
+    /// @brief Reads the register values from the device, starting
+    /// at [startReg] and reading sizeof([buf]) elements
+    /// @param buf The array to populate with the register values.
+    /// @param len The number of registers to read.
+    /// @param startReg The register starting addres to commence 
+    /// reading at.
+    /// @param verbose Prints the results of the register poll 
+    /// to the serial port if true. Defaults to true.
+    void readAllRegisters(byte * buf, 
+                         uint8_t len, 
+                          byte startReg = 0,
+                          bool verbose = true);
 
     /// @brief Returns an address string from the [address].
     /// @param b The byte to stringify.
     /// @return A string from the byte [b].
-    static String getByteString(byte b);
+    static String getByteString(byte b, 
+        uint8_t format = HEX, 
+        bool addPrefix = true);
 
 private:
     

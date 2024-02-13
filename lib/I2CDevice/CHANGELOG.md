@@ -1,5 +1,11 @@
 <!-- I2CDevice -->
 
+## 1.0.2
+
+* Added utility read and write functions to `I2Device` class.
+* Renamed function `I2Device::read` to `I2Device::readLen`.
+* Renamed function `I2Device::write` to `I2Device::writeLen`.
+
 ## 1.0.1
 
 * Added function `uint8_t I2Device::listDevices(byte * devices)`. 
