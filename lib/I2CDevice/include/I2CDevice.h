@@ -120,25 +120,25 @@ public:
      ///         Value to write
     void write8(byte reg, byte value);
 
-     /// @brief  Reads 8 bits from specified register
+     /// @brief  Reads 8 bits from specified register.
      /// @param  reg
      ///         Register to write to
      /// @return Value in register
     uint8_t read8(byte reg);
 
-     /// @brief  Reads 32 bits from specified register
+     /// @brief  Reads 32 bits from specified register.
      /// @param  reg
      ///         Register to write to
      /// @return Value in register
     uint32_t read32(uint8_t reg);
 
-     /// @brief  Reads 16 bites from specified register
+     /// @brief  Reads 16 bits from specified register.
      /// @param  reg
      ///         Register to write to
      /// @return Value in register
     uint16_t read16(uint8_t reg);
     
-     /// @brief  Reads 16 bits from specified register
+     /// @brief  Reads 16 bits from specified register.
      /// @param  reg
      ///         Register to write to
      /// @return Value in register
@@ -171,19 +171,20 @@ public:
                 uint8_t *read_buffer, size_t read_len,
                 bool stop = false);
     
-     /// @brief  Change the I2C clock speed to desired (relies on
+     /// @brief  Change the I2C clock speed to desired. Relies on
      /// underlying Wire support!
      /// @param desiredclk The desired I2C SCL frequency
      /// @return True if this platform supports changing I2C speed.
      /// Not necessarily that the speed was achieved!
     bool setSpeed(uint32_t desiredclk);
 
-    /*!   @brief  How many bytes we can read in a transaction
-        /// @return The size of the Wire receive/transmit buffer */
+    /*!   @brief Returns the maximum number of bytes that can be 
+    /// read in a transaction..
+    /// @return The size of the Wire receive/transmit buffer */
     size_t maxBufferSize() { return _maxBufferSize; }
 
-    /// @brief Poll all addresses on [i2c_wire] and populate a 
-    /// list of the addresses that respond.
+    /// @brief Poll all addresses on [i2c_wire] and populate an 
+    /// array of the addresses that respond.
     /// @param devices Array that will be populated with the 
     /// addresses of the attached I2C devices.
     /// @param verbose Prints the results of the device poll 
@@ -192,7 +193,7 @@ public:
     uint8_t listDevices(byte  devices[], bool verbose = true);
 
     /// @brief Reads the register values from the device, starting
-    /// at [startReg] and reading sizeof([buf]) elements
+    /// at [startReg] and reading [len] elements
     /// @param buf The array to populate with the register values.
     /// @param len The number of registers to read.
     /// @param startReg The register starting addres to commence 
@@ -204,7 +205,7 @@ public:
                           byte startReg = 0,
                           bool verbose = true);
 
-    /// @brief Returns an address string from the [address].
+    /// @brief Returns a string from the byte [b].
     /// @param b The byte to stringify.
     /// @return A string from the byte [b].
     static String getByteString(byte b, 
