@@ -103,5 +103,5 @@ void powerUp(){
 ```
 
 ## References
-*[Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO)
+* [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO)
 
