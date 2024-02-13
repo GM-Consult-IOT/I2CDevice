@@ -1,5 +1,10 @@
 <!-- I2CDevice -->
 
+## 1.0.3
+
+* Added function `bool I2CDevice::isInitialized()`.
+* Minor changes to `I2CDevice::begin` definition.
+
 ## 1.0.2
 
 * Added utility read and write functions to `I2Device` class.

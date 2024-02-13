@@ -45,7 +45,7 @@ The `I2CDevice` exposes the following public functions:
 // specify the SDA and SCL pins if not standard
 #define I2C_SDA 21 // default SDA pin on the ESP32
 #define I2C_SCL 22 // default SCL pin on the ESP32
-#define APDS_ADDR 0x39 // I2C address for and APDS9930 sensor.
+#define APDS_ADDR 0x39 // I2C address for an APDS9930 sensor.
 #define LED_OUTPUT_PIN 26 // Attach an LED to GPIO26, with a current limiting resistor.
 
 /// @brief List of connected I2C device addresses.
@@ -106,4 +106,6 @@ void powerUp(){
 
 ## References
 * [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO)
+* [CI for Arduino](https://mirzafahad.github.io/2021-03-09-github-cicd-for-arduino-projects/)
+* [ESP32 and ESP8266 continuous integration with PlatformIO demo using GitHub Actions and badges](https://github.com/kaizoku-oh/pio-ci-example/tree/master/.github/workflows)
 

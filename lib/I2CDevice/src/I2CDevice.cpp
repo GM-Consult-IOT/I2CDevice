@@ -23,14 +23,15 @@ bool I2CDevice::begin(bool addr_detect,
     _wire->begin(sda, scl, frequency);
     _begun = true;
     if (addr_detect) {
-        return detected();
+        _begun = detected();
     }
-    return true;
+    return _begun;
 };
 
-/*!
-*    @brief  De-initialize device, turn off the Wire interface
-*/
+bool I2CDevice::isInitialized(){
+    return _begun;
+};
+
 void I2CDevice::end(void) {
     // Not all port implement Wire::end(), such as
     // - ESP8266

@@ -7,7 +7,7 @@
 // specify the SDA and SCL pins if not standard
 #define I2C_SDA 21 // default SDA pin on the ESP32
 #define I2C_SCL 22 // default SCL pin on the ESP32
-#define APDS_ADDR 0x39 // I2C address for and APDS9930 sensor.
+#define APDS_ADDR 0x39 // I2C address for an APDS9930 sensor.
 #define LED_OUTPUT_PIN 26 // Attach an LED to GPIO26, with a current limiting resistor.
 
 /// @brief List of connected I2C device addresses.

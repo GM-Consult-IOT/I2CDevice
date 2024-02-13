@@ -52,6 +52,11 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+
+#define I2C_SDA 21
+#define I2C_SCL 22
+#define I2C_FREQ 0U
+
 ///< The class which defines how we will talk to this device over I2C
 class I2CDevice {
 public:
@@ -74,9 +79,13 @@ public:
     /// don't respond well to a scan!
     /// @return true if the instance was properly initialized.
     bool begin(bool addr_detect = true, 
-            int sda = 21, 
-            int scl = 22, 
-            uint32_t frequency = 0U);
+            int sda = I2C_SDA, 
+            int scl = I2C_SCL, 
+            uint32_t frequency = I2C_FREQ);
+
+    /// @brief returns true if the [I2CDeivce] has been initialized;
+    /// @return true if the [I2CDeivce] has been initialized;
+    bool isInitialized();
 
     /// @brief Calls [wire.close()] and sets _begun = false.
     void end(void);
