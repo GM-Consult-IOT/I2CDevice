@@ -1,6 +1,6 @@
-<!-- ![](https://github.com/<OWNER>/<REPOSITORY>/workflows/<WORKFLOW_NAME>/badge.svg) -->
+<!-- ![](https://github.com/<OWNER>/<REPOSITORY>/workflows/<WORKFLOW_NAME>/badge.svg) 
 ![](https://github.com/GM-Consult-IOT/I2CDevice/workflows/Build/badge.svg)
-![](https://github.com/GM-Consult-IOT/I2CDevice/workflows/Release/badge.svg)
+![](https://github.com/GM-Consult-IOT/I2CDevice/workflows/Release/badge.svg)-->
 
 # [![Github Repo](https://github.com/GM-Consult-IOT/I2CDevice/blob/main/.img/119493932.png)](https://github.com/GM-Consult-IOT/I2CDevice)  I2CDevice
 
@@ -40,75 +40,41 @@ The `I2CDevice` exposes the following public functions:
 
 ## Usage
 
+Examples of usage are available in the [examples folder](https://github.com/GM-Consult-IOT/I2CDevice/tree/main/lib/I2CDevice/examples).
+
+Code snippets below demonstrate simple operations.
+
 ```C++
-#include <Arduino.h>
 
 // include the library in your main.cpp
 #include <I2CDevice.h>
 
-// specify the SDA and SCL pins if not standard
-#define I2C_SDA 21 // default SDA pin on the ESP32
-#define I2C_SCL 22 // default SCL pin on the ESP32
-#define APDS_ADDR 0x39 // I2C address for an APDS9930 sensor.
-#define LED_OUTPUT_PIN 26 // Attach an LED to GPIO26, with a current limiting resistor.
+// initialize the [I2CDevice].
+bool ready = i2c.begin(true, I2C_SDA, I2C_SCL);
+    
+// list all the devices on the bus and return the number found
+uint8_t num = i2c.listDevices(devices);    
+  
 
-/// @brief List of connected I2C device addresses.
-byte devices[9]; 
+// Read one value from a register:
+// *****************************************************
 
-/// @brief Buffer for reading all the register values from the
-/// APDS9930 sensor.
-byte regValues[0x1F];
+// the buffer to read to
+byte regValues[1];  
 
-/// @brief The I2CDevice instance to be tested.
-I2CDevice i2c(APDS_ADDR, &Wire);
+// Assemble the control command, in this case an 8-bit 
+// value with bits 7 and 5 set and bits 4-1 being the 
+// register address
+byte cmd[1] = {0x12 | 0xA0};
 
-/// @brief The current LED state.
-bool ledStateOn = true;
+// write the command then read the value in register 0x12 
+i2c.write_then_read(cmd, 1, regValues, 1, true);
 
-/// @brief Initialize the LED pin and turn on the LED.
-void powerUp();
-
-void setup() {
-  // wait 50ms
-  delay(50);
-
-  // initialize the LED and turn on
-  powerUp();
-
-  // initialize the debugging port
-  Serial.begin(115200);  
-  while(!Serial){
-    vTaskDelay(50/portTICK_PERIOD_MS);
-  }
-  Serial.println("Serial port is initialized."); 
-
-  // initialize the [I2CDevice].
-  if (i2c.begin(true, I2C_SDA, I2C_SCL)){    
-    Serial.printf("I2C Device initialized with "
-        "address 0x%s\n", String(i2c.address(), HEX)); 
-    i2c.listDevices(devices); 
-    i2c.readAllRegisters(regValues, 0x1F);
-  } else {    
-    Serial.println("I2C Device FAILED to initialize!"); 
-  }
-}
-void loop() {
-  // let's flash the LED
-  ledStateOn = !ledStateOn;
-  digitalWrite(LED_OUTPUT_PIN, ledStateOn);
-
-  delay(500);
-}
-
-void powerUp(){    
-    // set the LED pin mode
-    pinMode(LED_OUTPUT_PIN, OUTPUT);
-    // turn on the LED
-    digitalWrite(LED_OUTPUT_PIN, HIGH);
-}
 ```
 
 ## References
+* [I2C-Bus Specification and user manual](https://www.nxp.com/docs/en/user-guide/UM10204.pdf)
+* [I2C, Wikipedia]
 * [Adafruit_BusIO](https://github.com/adafruit/Adafruit_BusIO)
 * [CI for Arduino](https://mirzafahad.github.io/2021-03-09-github-cicd-for-arduino-projects/)
 * [ESP32 and ESP8266 continuous integration with PlatformIO demo using GitHub Actions and badges](https://github.com/kaizoku-oh/pio-ci-example/tree/master/.github/workflows)

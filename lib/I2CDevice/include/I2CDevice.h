@@ -95,96 +95,143 @@ public:
     /// @return true if [_addr] is detected on the bus.
     bool detected(void);
    
-     /// @brief  Read from I2C into a buffer from the I2C device.
-     /// Cannot be more than maxBufferSize() bytes.
-     /// @param  buffer Pointer to buffer of data to read into
-     /// @param  len Number of bytes from buffer to read.
-     /// @param  stop Whether to send an I2C STOP signal on read
-     /// @return True if read was successful, otherwise false.
-    bool readLength(uint8_t *buffer, size_t len, bool stop = true);
+    /// @brief  Read from I2C into a buffer from the I2C device.
+    /// Cannot be more than maxBufferSize() bytes.
+    /// @param  buffer Pointer to buffer of data to read into
+    /// @param  len Number of bytes from buffer to read.
+    /// @param  stop Whether to send an I2C STOP signal on read
+    /// @return True if read was successful, otherwise false.
+    bool read(uint8_t *buffer, size_t len, bool stop = true);
 
-     /// @brief  Reads num bytes from specified register into a given buffer
-     /// @param  reg
-     ///         Register
-     /// @param  *buf
-     ///         Buffer
-     /// @param  num
-     ///         Number of bytes
-     /// @return Position after reading
-    uint8_t read(uint8_t reg, uint8_t *buf, uint8_t num);
+    // /// @brief  Reads num bytes from specified register into a given buffer
+    // /// @param  reg Register
+    // /// @param  buf Buffer
+    // /// @param  num  Number of bytes
+    // /// @param verbose Prints the results of the register poll 
+    // /// to the serial port if true. Defaults to true.
+    // /// @return Position after reading
+    // uint8_t readRegister(uint8_t reg, 
+    //              uint8_t *buf, 
+    //              uint8_t num,
+    //              bool verbose = false);
 
-     /// @brief  Writes num bytes from specified buffer into a given register
-     /// @param  reg
-     ///         Register
-     /// @param  *buf
-     ///         Buffer
-     /// @param  num
-     ///         Number of bytes
-    void write(uint8_t reg, uint8_t *buf, uint8_t num);
+    // /// @brief Reads the register values from the device, starting
+    // /// at [startReg] and reading [len] elements
+    // /// @param buf The array to populate with the register values.
+    // /// @param len The number of registers to read.
+    // /// @param startReg The register starting addres to commence 
+    // /// reading at.
+    // /// @param verbose Prints the results of the register poll 
+    // /// to the serial port if true. Defaults to true.
+    // void readAllRegisters(byte * buf, 
+    //                      uint8_t len, 
+    //                       byte startReg = 0,
+    //                       bool verbose = true);
 
-     /// @brief  Writes specified value to given register
-     /// @param  reg
-     ///         Register to write to
-     /// @param  value
-     ///         Value to write
-    void write8(byte reg, byte value);
+    // /// @brief  Writes num bytes from specified buffer into a given register
+    // /// @param  reg Register
+    // /// @param  buf Buffer
+    // /// @param  num Number of bytes
+    // void write(uint8_t reg, uint8_t *buf, uint8_t num);
 
-     /// @brief  Reads 8 bits from specified register.
-     /// @param  reg
-     ///         Register to write to
-     /// @return Value in register
-    uint8_t read8(byte reg);
+    // /// @brief  Writes specified value to given register
+    // /// @param  reg Register to write to
+    // /// @param  value Value to write
+    // void write8(byte reg, byte value);
 
-     /// @brief  Reads 32 bits from specified register.
-     /// @param  reg
-     ///         Register to write to
-     /// @return Value in register
-    uint32_t read32(uint8_t reg);
+    // /// @brief  Reads 8 bits from specified register.
+    // /// @param  reg Register to write from.
+    // /// @return Value in register [reg].
+    // uint8_t read8(byte reg);
 
-     /// @brief  Reads 16 bits from specified register.
-     /// @param  reg
-     ///         Register to write to
-     /// @return Value in register
-    uint16_t read16(uint8_t reg);
+    // /// @brief  Reads 32 bits from specified register.
+    // /// @param  reg Register to write to
+    // /// @return Value in register
+    // uint32_t read32(uint8_t reg, bool bigEndian = true);
+
+    // /// @brief  Reads 16 bits from specified register.
+    // /// @param  reg Register to write to
+    // /// @return Value in register
+    // uint16_t read16(uint8_t reg, bool bigEndian = true);
     
-     /// @brief  Reads 16 bits from specified register.
-     /// @param  reg
-     ///         Register to write to
-     /// @return Value in register
-    uint16_t read16R(uint8_t reg);
+    // /// @brief  Reads 16 bits from specified register.
+    // /// @param  reg Register to write to
+    // /// @return Value in register
+    // uint16_t read16R(uint8_t reg);
 
-     /// @brief  Write a buffer or two to the I2C device. Cannot be more than
-     /// maxBufferSize() bytes.
-     /// @param  buffer Pointer to buffer of data to write. This is const to
-     ///         ensure the content of this buffer doesn't change.
-     /// @param  len Number of bytes from buffer to write
-     /// @param  prefix_buffer Pointer to optional array of data to write before
-     /// buffer. Cannot be more than maxBufferSize() bytes. This is const to
-     ///         ensure the content of this buffer doesn't change.
-     /// @param  prefix_len Number of bytes from prefix buffer to write
-     /// @param  stop Whether to send an I2C STOP signal on write
-     /// @return True if write was successful, otherwise false.
-    bool writeLen(const uint8_t *buffer, size_t len, bool stop = true,
-                const uint8_t *prefix_buffer = nullptr, size_t prefix_len = 0);
+    /// @brief  Write a buffer or two to the I2C device. Cannot be more than
+    /// maxBufferSize() bytes.
+    /// @param  buffer Pointer to buffer of data to write. This is const to
+    ///  ensure the content of this buffer doesn't change.
+    /// @param  len Number of bytes from buffer to write.
+    /// @param  prefix_buffer Pointer to optional array of data to write before
+    /// buffer. Cannot be more than maxBufferSize() bytes. This is const to
+    /// ensure the content of this buffer doesn't change.
+    /// @param  prefix_len Number of bytes from prefix buffer to write
+    /// @param  stop Whether to send an I2C STOP signal on write
+    /// @return True if write was successful, otherwise false.
+    bool write(const uint8_t *buffer, 
+               size_t len, 
+               bool stop = true,
+                const uint8_t *prefix_buffer = nullptr, 
+                size_t prefix_len = 0);
 
-     /// @brief  Write some data, then read some data from I2C into another buffer.
-     /// Cannot be more than maxBufferSize() bytes. The buffers can point to
-     /// same/overlapping locations.
-     /// @param  write_buffer Pointer to buffer of data to write from
-     /// @param  write_len Number of bytes from buffer to write.
-     /// @param  read_buffer Pointer to buffer of data to read into.
-     /// @param  read_len Number of bytes from buffer to read.
-     /// @param  stop Whether to send an I2C STOP signal between the write and read
-     /// @return True if write & read was successful, otherwise false.
+
+    // /// @brief Writes the bytes in [buf] to the device starting
+    // /// at regeister address [reg]
+    // /// @param reg The 8-bit register address to write to.
+    // /// @param buf Pointer to buffer of data to write. This is const to
+    // ///  ensure the content of this buffer doesn't change.   
+    // /// @param  stop Whether to send an I2C STOP signal on write
+    // /// @param  len Number of bytes from buffer to write.
+    // /// @return true if the data in [buf]  were written.
+    // bool write(uint8_t reg, 
+    //            const uint8_t * buf, 
+    //            size_t len, 
+    //            bool stop = true);
+
+    /// @brief Writes a single byte to the I2C device.
+    /// @param val The byte to write.
+    /// @return true if the byte was written.
+    bool write(uint8_t val, 
+               bool stop = true);
+
+    // /// @brief Writes a 16 bit value to the I2C device.
+    // /// @param val The 16 bit value to write.
+    // /// @param bigEndian If true the data is sent with the highest 
+    // /// byte first
+    // /// @return true if the 16 bit value was written.
+    // bool write(uint16_t val, 
+    //            bool bigEndian = true, 
+    //            bool stop = true);
+
+    // /// @brief Writes a 32 bit value to the I2C device.
+    // /// @param val The 32 bit value to write.
+    // /// @param bigEndian If true the data is sent with the highest 
+    // /// byte first
+    // /// @return true if the 32 bit value was written.
+    // bool write(uint32_t val, 
+    //            bool bigEndian = true, 
+    //            bool stop = true);
+
+    /// @brief  Write some data, then read some data from I2C into another buffer.
+    /// Cannot be more than maxBufferSize() bytes. The buffers can point to
+    /// same/overlapping locations.
+    /// @param  write_buffer Pointer to buffer of data to write from
+    /// @param  write_len Number of bytes from buffer to write.
+    /// @param  read_buffer Pointer to buffer of data to read into.
+    /// @param  read_len Number of bytes from buffer to read.
+    /// @param  stop Whether to send an I2C STOP signal between the write and read
+    /// @return True if write & read was successful, otherwise false.
     bool write_then_read(const uint8_t *write_buffer, size_t write_len,
                 uint8_t *read_buffer, size_t read_len,
                 bool stop = false);
     
-     /// @brief  Change the I2C clock speed to desired. Relies on
-     /// underlying Wire support!
-     /// @param desiredclk The desired I2C SCL frequency
-     /// @return True if this platform supports changing I2C speed.
-     /// Not necessarily that the speed was achieved!
+    /// @brief  Change the I2C clock speed to desired. Relies on
+    /// underlying Wire support!
+    /// @param desiredclk The desired I2C SCL frequency
+    /// @return True if this platform supports changing I2C speed.
+    /// Not necessarily that the speed was achieved!
     bool setSpeed(uint32_t desiredclk);
 
     /*!   @brief Returns the maximum number of bytes that can be 
@@ -199,20 +246,8 @@ public:
     /// @param verbose Prints the results of the device poll 
     /// to the serial port if true. Defaults to true.
     /// @return the number of devices that responded.
-    uint8_t listDevices(byte  devices[], bool verbose = true);
-
-    /// @brief Reads the register values from the device, starting
-    /// at [startReg] and reading [len] elements
-    /// @param buf The array to populate with the register values.
-    /// @param len The number of registers to read.
-    /// @param startReg The register starting addres to commence 
-    /// reading at.
-    /// @param verbose Prints the results of the register poll 
-    /// to the serial port if true. Defaults to true.
-    void readAllRegisters(byte * buf, 
-                         uint8_t len, 
-                          byte startReg = 0,
-                          bool verbose = true);
+    uint8_t listDevices(byte * devices, 
+                        bool verbose = true);
 
     /// @brief Returns a string from the byte [b].
     /// @param b The byte to stringify.

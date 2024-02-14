@@ -1,5 +1,9 @@
 <!-- I2CDevice -->
 
+## 1.0.4
+Breaking changes.
+*  Removed `I2CDevice::readAllregisters` function
+
 ## 1.0.3
 
 * Added function `bool I2CDevice::isInitialized()`.

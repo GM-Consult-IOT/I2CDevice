@@ -8,7 +8,7 @@ I2CDevice::I2CDevice(uint8_t addr, TwoWire *theWire) {
     _wire = theWire;
     _begun = false;
     #ifdef ARDUINO_ARCH_SAMD
-    _maxBufferSize = 250; // as defined in Wire.h's RingBuffer
+    _maxBufferSize = 250; // as defined in _wire->h's RingBuffer
     #elif defined(ESP32)
     _maxBufferSize = I2C_BUFFER_LENGTH;
     #else
@@ -75,7 +75,56 @@ bool I2CDevice::detected(void) {
     return false;
 };
 
-bool I2CDevice::writeLen(const uint8_t *buffer, size_t len, bool stop,
+bool I2CDevice::write(uint8_t val, 
+                      bool stop){
+    _wire->beginTransmission(_addr);
+    _wire->write(val);
+    if( _wire->endTransmission(stop) != 0 ) {
+        return false;
+    }    
+    return true;
+};
+
+
+// bool I2CDevice::write(uint16_t val, 
+//                       bool bigEndian, 
+//                       bool stop){
+//     byte buf[2];
+//     buf[0] = bigEndian? highByte(val): lowByte(val);
+//     buf[1] = bigEndian? lowByte(val): highByte(val);
+//     _wire->beginTransmission(_addr);
+//     if( _wire->write(buf,2) == 2) {
+//         return  _wire->endTransmission(stop) == 0;
+//     }    
+//     return false;
+// };
+
+
+// bool I2CDevice::write(uint32_t val, bool bigEndian, 
+//                bool stop){
+//     byte buf[4];
+//     buf[0] = bigEndian? highByte(val): lowByte(val);
+//     buf[1] = bigEndian? lowByte(val): highByte(val);
+//     _wire->beginTransmission(_addr);
+//     buf[0] = bigEndian? (val >> 24) & 0xFF: (val) & 0xFF;
+//     buf[1] = bigEndian? (val >> 16) & 0xFF: (val >> 8) & 0xFF;
+//     buf[2] = bigEndian? (val >> 8) & 0xFF: (val >> 16) & 0xFF;
+//     buf[3] = bigEndian? (val) & 0xFF: (val >> 24) & 0xFF;
+//     if( _wire->write(buf, 4) == 4) {
+//         return  _wire->endTransmission(stop) == 0;
+//     }    
+//     return false;
+// };
+
+// bool I2CDevice::write(uint8_t reg, 
+//         const uint8_t * buf, 
+//         size_t len , 
+//         bool stop){
+//     uint8_t pref[1] = {reg};
+//     return write(buf, len, stop, pref, 1);
+// };
+
+bool I2CDevice::write(const uint8_t *buffer, size_t len, bool stop,
                     const uint8_t *prefix_buffer,
                     size_t prefix_len) {
     if ((len + prefix_len) > maxBufferSize()) {
@@ -87,9 +136,7 @@ bool I2CDevice::writeLen(const uint8_t *buffer, size_t len, bool stop,
         #endif
         return false;
     }
-
     _wire->beginTransmission(_addr);
-
     // Write the prefix data (usually an address)
     if ((prefix_len != 0) && (prefix_buffer != nullptr)) {
         if (_wire->write(prefix_buffer, prefix_len) != prefix_len) {
@@ -143,7 +190,7 @@ bool I2CDevice::writeLen(const uint8_t *buffer, size_t len, bool stop,
     }
 };
 
-bool I2CDevice::readLength(uint8_t *buffer, size_t len, bool stop) {
+bool I2CDevice::read(uint8_t *buffer, size_t len, bool stop) {
     size_t pos = 0;
     while (pos < len) {
         size_t read_len =
@@ -195,10 +242,10 @@ bool I2CDevice::_read(uint8_t *buffer, size_t len, bool stop) {
 bool I2CDevice::write_then_read(const uint8_t *write_buffer,
                 size_t write_len, uint8_t *read_buffer,
                 size_t read_len, bool stop) {
-    if (!writeLen(write_buffer, write_len, stop)) {
+    if (!write(write_buffer, write_len, stop)) {
         return false;
     }
-    return readLength(read_buffer, read_len);
+    return read(read_buffer, read_len);
 };
 
 uint8_t I2CDevice::address(void) { 
@@ -257,8 +304,9 @@ bool I2CDevice::setSpeed(uint32_t desiredclk) {
     #endif
 };
 
-uint8_t I2CDevice::listDevices(byte * devices, bool verbose){
-    byte error, address;    
+uint8_t I2CDevice::listDevices(uint8_t * devices, 
+                               bool verbose){
+    uint8_t error, address;    
     uint8_t nDevices;
     if(verbose) {
         Serial.println("Scanning I2C bus");
@@ -299,7 +347,7 @@ uint8_t I2CDevice::listDevices(byte * devices, bool verbose){
     return nDevices;
 };
 
-String I2CDevice::getByteString(byte b, 
+String I2CDevice::getByteString(uint8_t b, 
                                 uint8_t format, 
                                 bool addPrefix){
     // prefix with "0x"
@@ -316,7 +364,7 @@ String I2CDevice::getByteString(byte b,
                     b < 0b100000? "000":
                     b < 0b1000000? "00":
                     b < 0b10000000? "0":
-                    "0x") ;
+                    "") ;
         break;
         case HEX:
             bStr = String(addPrefix? "0X": "") +
@@ -332,67 +380,88 @@ String I2CDevice::getByteString(byte b,
       return bStr+str;
 };
 
-void I2CDevice::write8(byte reg, byte value) {
-    this->write(reg, &value, 1);
-};
+// void I2CDevice::write8(uint8_t reg, uint8_t value) {
+//     uint8_t buf[1] = {value};
+//     this->write(reg, buf, 1);
+// };
 
-uint8_t I2CDevice::read8(byte reg) {
-    uint8_t ret;
-    this->read(reg, &ret, 1);
-    return ret;
-};
+// uint8_t I2CDevice::read8(uint8_t reg) {
+//     write(reg);
+//     uint8_t buf[0];
+//     this->read(0, buf, 0x20, true);
+//     return buf[reg];
+// };
 
-uint32_t I2CDevice::read32(uint8_t reg) {
-    uint8_t ret[4];
-    uint32_t ret32;
-    this->read(reg, ret, 4);
-    ret32 = ret[3];
-    ret32 |= (uint32_t)ret[2] << 8;
-    ret32 |= (uint32_t)ret[1] << 16;
-    ret32 |= (uint32_t)ret[0] << 24;
-    return ret32;
-};
+// uint32_t I2CDevice::read32(uint8_t reg) {
+//     uint8_t ret[4];
+//     uint32_t ret32;
+//     this->read(reg, ret, 4);
+//     ret32 = ret[3];
+//     ret32 |= (uint32_t)ret[2] << 8;
+//     ret32 |= (uint32_t)ret[1] << 16;
+//     ret32 |= (uint32_t)ret[0] << 24;
+//     return ret32;
+// };
 
-uint16_t I2CDevice::read16(uint8_t reg) {
-    uint8_t ret[2];
-    this->read(reg, ret, 2);
-    return (ret[0] << 8) | ret[1];
-};
+// uint16_t I2CDevice::read16(uint8_t reg) {
+//     uint8_t ret[2];
+//     this->read(reg, ret, 2);
+//     return (ret[0] << 8) | ret[1];
+// };
 
-uint16_t I2CDevice::read16R(uint8_t reg) {
-    uint8_t ret[2];
-    this->read(reg, ret, 2);
-    return (ret[1] << 8) | ret[0];
-};
+// uint16_t I2CDevice::read16Reversed(uint8_t reg) {
+//     uint8_t ret[2];
+//     this->read(reg, ret, 2);
+//     return (ret[1] << 8) | ret[0];
+// };
 
-uint8_t I2CDevice::read(uint8_t reg, uint8_t *buf, uint8_t num) {
-    buf[0] = reg;
-    write_then_read(buf, 1, buf, num);
-    return num;
-}
+// uint8_t I2CDevice::readRegister(uint8_t reg, 
+//                  uint8_t *buf, 
+//                  uint8_t num,
+//                  bool verbose) {
+    
+//     // buf[0] = reg;
+//     if (write(reg)){
+//         if (read(buf,num, true))
+//     // write_then_read(buf, 1, buf, num);
+//         if(verbose) {    
+//             Serial.println("______________________________");    
+//             Serial.println("REGISTER               VALUE");
+//             Serial.println("------------------------------");
+//             for (uint8_t i = 0; i < num; i++){
+//                 uint8_t regI = i + reg;
+//                 Serial.printf( " %s              %s\n", 
+//                     I2CDevice::getByteString(regI, HEX), 
+//                     I2CDevice::getByteString(buf[i], BIN));  
+//             }
+//         }   
+//     }
+//     return num;
+// }
 
-void I2CDevice::write(uint8_t reg, uint8_t *buf, uint8_t num) {
-    uint8_t prefix[1] = {reg};
-    writeLen(buf, num, true, prefix, 1);
-};
+// void I2CDevice::write(uint8_t reg, uint8_t *buf, uint8_t num) {
+//     uint8_t prefix[1] = {reg};
+//     writeLen(buf, num, true, prefix, 1);
+// };
 
-void I2CDevice::readAllRegisters(byte * buf,
-                        uint8_t len, 
-                        byte startReg,
-                        bool verbose){
-    if(verbose) {    
-    Serial.println("______________________________");    
-    Serial.println("REGISTER               VALUE");
-    Serial.println("------------------------------");
-    }   
-    for (uint8_t i = 0; i < len; i++){
-        uint8_t reg = i + startReg;
-        buf[i] = read8(reg);
-        if(verbose) { 
-        Serial.printf( " %s              %s\n", 
-            I2CDevice::getByteString(reg, HEX), 
-            I2CDevice::getByteString(buf[i], BIN));  
+// void I2CDevice::readAllRegisters(uint8_t * buf,
+//                         uint8_t len, 
+//                         uint8_t startReg,
+//                         bool verbose){
+//     if(verbose) {    
+//     Serial.println("______________________________");    
+//     Serial.println("REGISTER               VALUE");
+//     Serial.println("------------------------------");
+//     }   
+//     for (uint8_t i = 0; i < len; i++){
+//         uint8_t reg = i + startReg;
+//         buf[i] = read8(i + startReg);
+//         Serial.printf("buf[i] = %s\n", String(buf[i], BIN) );
+//         if(verbose) { 
+//         Serial.printf( " %s              %s\n", 
+//             I2CDevice::getByteString(reg, HEX), 
+//             I2CDevice::getByteString(buf[i], BIN));  
 
-        } 
-    }
-};
+//         } 
+//     }
+// };
