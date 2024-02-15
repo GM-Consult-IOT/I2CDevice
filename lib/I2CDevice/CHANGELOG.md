@@ -1,5 +1,9 @@
 <!-- I2CDevice -->
 
+## 1.0.5
+
+* Added function `TwoWire * I2cDevice::wire()`;
+
 ## 1.0.4
 Breaking changes.
 *  Removed `I2CDevice::readAllregisters` function

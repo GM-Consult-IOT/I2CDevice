@@ -71,6 +71,10 @@ public:
     /// @return The I2C address of the device on the bus
     uint8_t address(void);
 
+    /// @brief Returns the [TwoWire] reference used by the I2CDevice.
+    /// @return the [TwoWire] reference used by the I2CDevice.
+    TwoWire * wire();
+
     /// @brief Call [begin(addr_detect)] to initialize the I2CDevice 
     /// instance
     /// @param addr_detect If true, [begin] will try to detect whether

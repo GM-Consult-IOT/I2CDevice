@@ -28,6 +28,10 @@ bool I2CDevice::begin(bool addr_detect,
     return _begun;
 };
 
+TwoWire * I2CDevice::wire(){
+    return _wire;
+};
+
 bool I2CDevice::isInitialized(){
     return _begun;
 };
