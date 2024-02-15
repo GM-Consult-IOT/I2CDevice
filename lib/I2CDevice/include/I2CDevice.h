@@ -57,7 +57,7 @@
 #define I2C_SCL 22
 #define I2C_FREQ 0U
 
-///< The class which defines how we will talk to this device over I2C
+/// The class which defines how we will talk to this device over I2C
 class I2CDevice {
 public:
 

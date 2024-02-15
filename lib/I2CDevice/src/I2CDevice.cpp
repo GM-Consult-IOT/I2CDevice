@@ -20,7 +20,7 @@ bool I2CDevice::begin(bool addr_detect,
             int sda, 
             int scl, 
             uint32_t frequency) {
-    _wire->begin(sda, scl, frequency);
+    if (!_wire->begin(sda, scl, frequency)) return false;
     _begun = true;
     if (addr_detect) {
         _begun = detected();
